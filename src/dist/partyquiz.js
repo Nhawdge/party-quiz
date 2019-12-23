@@ -9,10 +9,41 @@ var BaseRtc = /** @class */ (function () {
                 _this.dataChannel.send(msg);
             }
         };
+        this.sendRaw = function (msg) {
+            _this.dataChannel.send(msg);
+        };
         this.peerConn = new RTCPeerConnection({ 'iceServers': [{ 'urls': ['stun:stun.l.google.com:19302'] }] });
+        document.getElementById("status").onkeypress = this.sendMessage;
     }
     return BaseRtc;
 }());
+function Log() {
+    var value = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        value[_i] = arguments[_i];
+    }
+    console.log(value);
+    var status = document.getElementById("status");
+    status.value += "LOG: " + value.join(" ") + "\n";
+}
+function Warn() {
+    var value = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        value[_i] = arguments[_i];
+    }
+    console.warn(value);
+    var status = document.getElementById("status");
+    status.value += "WARN: " + value.join(" ") + "\n";
+}
+function Err() {
+    var value = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        value[_i] = arguments[_i];
+    }
+    console.error(value);
+    var status = document.getElementById("status");
+    status.value += "ERROR: " + value.join(" ") + "\n";
+}
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -45,13 +76,11 @@ var Client = /** @class */ (function (_super) {
                 Log("Get the creator to call:", JSON.stringify(peerConn.localDescription));
             }
         };
-        //var offer: RTCSessionDescriptionInit = { sdp: "test", type: "offer" };
         var offerDesc = new RTCSessionDescription(offer);
         peerConn.setRemoteDescription(offerDesc);
         peerConn.createAnswer({})
             .then(function (answerDesc) { return peerConn.setLocalDescription(answerDesc); })
             .catch(function (err) { return Warn("Couldn't create answer"); });
-        document.getElementById("status").onkeypress = _this.sendMessage;
         return _this;
     }
     return Client;
@@ -74,17 +103,18 @@ var Host = /** @class */ (function (_super) {
         peerConn.onicecandidate = function (e) {
             if (e.candidate == null) {
                 Log("Get joiners to call: ", JSON.stringify(peerConn.localDescription));
-                setTimeout(function () {
-                    var value = JSON.parse(prompt("Joiner Response:") || "");
-                    gotAnswer(value);
-                }, 5000);
             }
         };
+        var acceptButton = document.getElementById("acceptClient");
+        acceptButton.onclick = function () {
+            return gotAnswer(JSON.parse(prompt("Joiner code") || ""));
+        };
+        acceptButton.hidden = false;
         var gotAnswer = function (answer) {
             Log("Initializing ...");
             peerConn.setRemoteDescription(new RTCSessionDescription(answer));
         };
-        document.getElementById("status").onkeypress = _this.sendMessage;
+        StartQuiz(_this.dataChannel);
         return _this;
     }
     return Host;
@@ -99,31 +129,17 @@ function StartClient(evt) {
 }
 document.getElementById("host").onclick = StartHost;
 document.getElementById("client").onclick = StartClient;
-function Log() {
-    var value = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        value[_i] = arguments[_i];
-    }
-    console.log(value);
-    var status = document.getElementById("status");
-    status.value += "LOG: " + value.join(" ") + "\n";
-}
-function Warn() {
-    var value = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        value[_i] = arguments[_i];
-    }
-    console.warn(value);
-    var status = document.getElementById("status");
-    status.value += "WARN: " + value.join(" ") + "\n";
-}
-function Err() {
-    var value = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        value[_i] = arguments[_i];
-    }
-    console.error(value);
-    var status = document.getElementById("status");
-    status.value += "ERROR: " + value.join(" ") + "\n";
+var question1 = {
+    question: "John is ...",
+    answers: [{
+            text: "Awesome",
+            value: 10
+        }, {
+            text: "Cool",
+            value: 8
+        }]
+};
+function StartQuiz(channel) {
+    channel.send(JSON.stringify(question1));
 }
 //# sourceMappingURL=partyquiz.js.map

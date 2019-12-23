@@ -19,14 +19,11 @@ class Client extends BaseRtc {
                 Log("Get the creator to call:", JSON.stringify(peerConn.localDescription))
             }
         };
-        //var offer: RTCSessionDescriptionInit = { sdp: "test", type: "offer" };
+
         var offerDesc = new RTCSessionDescription(offer);
         peerConn.setRemoteDescription(offerDesc);
         peerConn.createAnswer({})
             .then((answerDesc) => peerConn.setLocalDescription(answerDesc))
             .catch((err) => Warn("Couldn't create answer"));
-
-        (document.getElementById("status") as HTMLTextAreaElement).onkeypress = this.sendMessage
-
     }
 }

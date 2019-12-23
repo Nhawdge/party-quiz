@@ -1,4 +1,3 @@
-
 function StartHost(evt: MouseEvent): void {
     console.log("New Host")
     var host = new Host();
@@ -12,19 +11,27 @@ function StartClient(evt: MouseEvent): void {
 (document.getElementById("client") as HTMLButtonElement).onclick = StartClient;
 
 
+interface QuizQuestion {
+    question: string,
+    answers: Array<Answer>
+}
 
-function Log(...value: any[]) {
-    console.log(value);
-    var status = (document.getElementById("status") as HTMLTextAreaElement);
-    status.value += `LOG: ${value.join(" ")}\n`;
+interface Answer {
+    text: string,
+    value: number
 }
-function Warn(...value: any[]) {
-    console.warn(value);
-    var status = (document.getElementById("status") as HTMLTextAreaElement);
-    status.value += `WARN: ${value.join(" ")}\n`;
-}
-function Err(...value: any[]) {
-    console.error(value);
-    var status = (document.getElementById("status") as HTMLTextAreaElement);
-    status.value += `ERROR: ${value.join(" ")}\n`;
+
+var question1 = {
+    question: "John is ...",
+    answers: [{
+        text: "Awesome",
+        value: 10
+    }, {
+        text: "Cool",
+        value: 8
+    }]
+};
+
+function StartQuiz(channel: any) {
+    channel.send(JSON.stringify(question1));
 }

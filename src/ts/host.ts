@@ -2,7 +2,7 @@ class Host extends BaseRtc {
     dataChannel: any;
     constructor() {
         super();
-        var peerConn =this.peerConn;
+        var peerConn = this.peerConn;
         Log("Creating ...");
         this.dataChannel = peerConn.createDataChannel('test');
         this.dataChannel.onopen = (e) => {
@@ -18,18 +18,20 @@ class Host extends BaseRtc {
         peerConn.onicecandidate = (e) => {
             if (e.candidate == null) {
                 Log("Get joiners to call: ", JSON.stringify(peerConn.localDescription));
-                setTimeout(() => {
-                    var value = JSON.parse(prompt("Joiner Response:") || "");
-                    gotAnswer(value);
-                }, 5000);
             }
         };
+
+        var acceptButton = (document.getElementById("acceptClient") as HTMLButtonElement)
+        acceptButton.onclick = () =>
+            gotAnswer(JSON.parse(prompt("Joiner code") || ""));
+
+        acceptButton.hidden = false;
 
         var gotAnswer = (answer) => {
             Log("Initializing ...");
             peerConn.setRemoteDescription(new RTCSessionDescription(answer));
         };
 
-        (document.getElementById("status") as HTMLTextAreaElement).onkeypress = this.sendMessage
+        StartQuiz(this.dataChannel);
     }
 }
