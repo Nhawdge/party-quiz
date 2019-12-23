@@ -12,8 +12,12 @@ var BaseRtc = /** @class */ (function () {
         this.sendRaw = function (msg) {
             _this.dataChannel.send(msg);
         };
+        this.toggleStatusWindow = function () {
+            _this.statusWindow.hidden = !_this.statusWindow.hidden;
+        };
         this.peerConn = new RTCPeerConnection({ 'iceServers': [{ 'urls': ['stun:stun.l.google.com:19302'] }] });
-        document.getElementById("status").onkeypress = this.sendMessage;
+        this.statusWindow = document.getElementById("status");
+        this.statusWindow.onkeypress = this.sendMessage;
     }
     return BaseRtc;
 }());
@@ -67,7 +71,8 @@ var Client = /** @class */ (function (_super) {
         peerConn.ondatachannel = function (e) {
             _this.dataChannel = e.channel;
             _this.dataChannel.onopen = function (e) {
-                _this.dataChannel.send("Connected");
+                _this.toggleStatusWindow();
+                QuizPlayer(_this.dataChannel);
             };
             _this.dataChannel.onmessage = function (e) { Log('Got message:', e.data); };
         };
@@ -93,7 +98,8 @@ var Host = /** @class */ (function (_super) {
         Log("Creating ...");
         _this.dataChannel = peerConn.createDataChannel('test');
         _this.dataChannel.onopen = function (e) {
-            Log(_this.dataChannel.send("Connected"));
+            _this.toggleStatusWindow();
+            QuizServer(_this.dataChannel);
         };
         _this.dataChannel.onmessage = function (e) { Log('Got message:', e.data); };
         peerConn.createOffer({})
@@ -114,7 +120,6 @@ var Host = /** @class */ (function (_super) {
             Log("Initializing ...");
             peerConn.setRemoteDescription(new RTCSessionDescription(answer));
         };
-        StartQuiz(_this.dataChannel);
         return _this;
     }
     return Host;
@@ -130,6 +135,7 @@ function StartClient(evt) {
 document.getElementById("host").onclick = StartHost;
 document.getElementById("client").onclick = StartClient;
 var question1 = {
+    questionId: "1",
     question: "John is ...",
     answers: [{
             text: "Awesome",
@@ -139,7 +145,40 @@ var question1 = {
             value: 8
         }]
 };
-function StartQuiz(channel) {
-    channel.send(JSON.stringify(question1));
+function QuizServer(channel) {
+    channel.onmessage = function (e) {
+        var data = JSON.parse(e.data);
+        if (data && data.ready) {
+            channel.send(JSON.stringify(question1));
+        }
+    };
+}
+function QuizPlayer(channel) {
+    channel.onmessage = function (e) {
+        var question = JSON.parse(e.data);
+        console.log("Question:", question);
+        if (question.questionId) {
+            RenderQuestion(question);
+        }
+    };
+    channel.send(JSON.stringify({ ready: true }));
+}
+function RenderQuestion(question) {
+    var quiz = document.getElementById("quiz");
+    var label = document.createElement("label");
+    label.innerText = question.question;
+    quiz.appendChild(label);
+    for (var _i = 0, _a = question.answers; _i < _a.length; _i++) {
+        var i = _a[_i];
+        var qlabel = document.createElement("label");
+        var input = document.createElement("input");
+        input.type = "radio";
+        input.innerText = i.text;
+        input.value = i.value.toString();
+        input.name = "q" + question.questionId;
+        qlabel.innerText = i.text;
+        qlabel.appendChild(input);
+        quiz.appendChild(qlabel);
+    }
 }
 //# sourceMappingURL=partyquiz.js.map

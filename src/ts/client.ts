@@ -9,7 +9,8 @@ class Client extends BaseRtc {
         peerConn.ondatachannel = (e) => {
             this.dataChannel = e.channel;
             this.dataChannel.onopen = (e) => {
-                this.dataChannel.send("Connected")
+                this.toggleStatusWindow();
+                QuizPlayer(this.dataChannel);
             };
             this.dataChannel.onmessage = (e) => { Log('Got message:', e.data); }
         };

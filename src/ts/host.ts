@@ -6,7 +6,8 @@ class Host extends BaseRtc {
         Log("Creating ...");
         this.dataChannel = peerConn.createDataChannel('test');
         this.dataChannel.onopen = (e) => {
-            Log(this.dataChannel.send("Connected"))
+             this.toggleStatusWindow();
+            QuizServer(this.dataChannel);
         };
 
         this.dataChannel.onmessage = (e) => { Log('Got message:', e.data); };
@@ -32,6 +33,5 @@ class Host extends BaseRtc {
             peerConn.setRemoteDescription(new RTCSessionDescription(answer));
         };
 
-        StartQuiz(this.dataChannel);
     }
 }
