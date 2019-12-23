@@ -1,18 +1,38 @@
 "use strict";
-var Client = /** @class */ (function () {
-    function Client() {
+var BaseRtc = /** @class */ (function () {
+    function BaseRtc() {
         var _this = this;
         this.sendMessage = function (ev) {
-            console.log(ev);
             if (ev.keyCode == 13) {
                 var t = ev.target;
                 var msg = t.value.split("\n").pop();
                 _this.dataChannel.send(msg);
             }
         };
+        this.peerConn = new RTCPeerConnection({ 'iceServers': [{ 'urls': ['stun:stun.l.google.com:19302'] }] });
+    }
+    return BaseRtc;
+}());
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var Client = /** @class */ (function (_super) {
+    __extends(Client, _super);
+    function Client() {
+        var _this = _super.call(this) || this;
         Log("Joining ...");
         var offer = JSON.parse(prompt("Paste connection string") || "");
-        var peerConn = new RTCPeerConnection({ 'iceServers': [{ 'urls': ['stun:stun.l.google.com:19302'] }] });
+        var peerConn = _this.peerConn;
         peerConn.ondatachannel = function (e) {
             _this.dataChannel = e.channel;
             _this.dataChannel.onopen = function (e) {
@@ -31,27 +51,22 @@ var Client = /** @class */ (function () {
         peerConn.createAnswer({})
             .then(function (answerDesc) { return peerConn.setLocalDescription(answerDesc); })
             .catch(function (err) { return Warn("Couldn't create answer"); });
-        document.getElementById("status").onkeypress = this.sendMessage;
+        document.getElementById("status").onkeypress = _this.sendMessage;
+        return _this;
     }
     return Client;
-}());
-var Host = /** @class */ (function () {
+}(BaseRtc));
+var Host = /** @class */ (function (_super) {
+    __extends(Host, _super);
     function Host() {
-        var _this = this;
-        this.sendMessage = function (ev) {
-            if (ev.keyCode == 13) {
-                var t = ev.target;
-                var msg = t.value.split("\n").pop();
-                _this.dataChannel.send(msg);
-            }
-        };
-        var peerConn = new RTCPeerConnection({ 'iceServers': [{ 'urls': ['stun:stun.l.google.com:19302'] }] });
+        var _this = _super.call(this) || this;
+        var peerConn = _this.peerConn;
         Log("Creating ...");
-        this.dataChannel = peerConn.createDataChannel('test');
-        this.dataChannel.onopen = function (e) {
+        _this.dataChannel = peerConn.createDataChannel('test');
+        _this.dataChannel.onopen = function (e) {
             Log(_this.dataChannel.send("Connected"));
         };
-        this.dataChannel.onmessage = function (e) { Log('Got message:', e.data); };
+        _this.dataChannel.onmessage = function (e) { Log('Got message:', e.data); };
         peerConn.createOffer({})
             .then(function (desc) { return peerConn.setLocalDescription(desc); })
             .then(function () { })
@@ -69,10 +84,11 @@ var Host = /** @class */ (function () {
             Log("Initializing ...");
             peerConn.setRemoteDescription(new RTCSessionDescription(answer));
         };
-        document.getElementById("status").onkeypress = this.sendMessage;
+        document.getElementById("status").onkeypress = _this.sendMessage;
+        return _this;
     }
     return Host;
-}());
+}(BaseRtc));
 function StartHost(evt) {
     console.log("New Host");
     var host = new Host();

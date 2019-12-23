@@ -1,7 +1,8 @@
-class Host {
+class Host extends BaseRtc {
     dataChannel: any;
     constructor() {
-        var peerConn = new RTCPeerConnection({ 'iceServers': [{ 'urls': ['stun:stun.l.google.com:19302'] }] });
+        super();
+        var peerConn =this.peerConn;
         Log("Creating ...");
         this.dataChannel = peerConn.createDataChannel('test');
         this.dataChannel.onopen = (e) => {
@@ -30,14 +31,5 @@ class Host {
         };
 
         (document.getElementById("status") as HTMLTextAreaElement).onkeypress = this.sendMessage
-    }
-
-    sendMessage = (ev: KeyboardEvent) => {
-        if (ev.keyCode == 13){
-            
-            var t = ev.target as HTMLTextAreaElement;
-            var msg = t.value.split("\n").pop();
-            this.dataChannel.send(msg);
-        }
     }
 }

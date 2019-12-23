@@ -1,9 +1,10 @@
-class Client {
+class Client extends BaseRtc {
     dataChannel: any;
     constructor() {
+        super();
         Log("Joining ...");
         var offer = JSON.parse(prompt("Paste connection string") || "");
-        var peerConn = new RTCPeerConnection({ 'iceServers': [{ 'urls': ['stun:stun.l.google.com:19302'] }] });
+        var peerConn = this.peerConn;
 
         peerConn.ondatachannel = (e) => {
             this.dataChannel = e.channel;
@@ -27,14 +28,5 @@ class Client {
 
         (document.getElementById("status") as HTMLTextAreaElement).onkeypress = this.sendMessage
 
-    }
-
-    sendMessage = (ev: KeyboardEvent) => {
-        console.log(ev)
-        if (ev.keyCode  == 13) {
-            var t = ev.target as HTMLTextAreaElement;
-            var msg = t.value.split("\n").pop();
-            this.dataChannel.send(msg);
-        }
     }
 }
