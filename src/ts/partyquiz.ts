@@ -11,9 +11,16 @@ function StartClient(evt: MouseEvent): void {
 (document.getElementById("client") as HTMLButtonElement).onclick = StartClient;
 
 
+enum QuestionType {
+    MultipleChoice,
+    SingleChoice,
+    WriteIn
+}
+
 interface QuizQuestion {
     questionId: string,
     question: string,
+    questionType: QuestionType
     answers: Array<Answer>
 }
 
@@ -23,8 +30,9 @@ interface Answer {
 }
 
 var question1 = {
-    questionId: "1",
+    questionId: "q1",
     question: "John is ...",
+    questionType: QuestionType.SingleChoice,
     answers: [{
         text: "Awesome",
         value: 10
@@ -40,7 +48,11 @@ function QuizServer(channel: any) {
         if (data && data.ready) {
             channel.send(JSON.stringify(question1));
         }
+        if (data && data.questionId) {
+            Log(data);
+        }
     }
+
 }
 
 function QuizPlayer(channel: any) {
@@ -48,7 +60,10 @@ function QuizPlayer(channel: any) {
         var question = JSON.parse(e.data) as QuizQuestion;
         console.log("Question:", question);
         if (question.questionId) {
-            RenderQuestion(question);
+            var submit = RenderQuestion(question);
+            submit.onclick = (e) => {
+                channel.send(JSON.stringify({ questionId: "q1", answer: "true" }))
+            }
         }
     }
     channel.send(JSON.stringify({ ready: true }))
@@ -63,12 +78,30 @@ function RenderQuestion(question: QuizQuestion) {
     for (let i of question.answers) {
         var qlabel = document.createElement("label")
         var input = document.createElement("input");
-        input.type = "radio";
+        switch (question.questionType) {
+            case QuestionType.SingleChoice:
+                input.type = "radio";
+                break;
+            case QuestionType.MultipleChoice:
+                input.type = "checkbox";
+                break;
+            case QuestionType.WriteIn:
+                input.type = "text";
+                break;
+        }
         input.innerText = i.text;
         input.value = i.value.toString();
-        input.name = "q" + question.questionId;
+        input.name = question.questionId;
         qlabel.innerText = i.text;
         qlabel.appendChild(input)
         quiz.appendChild(qlabel);
     }
+    var submit = document.createElement("input");
+    submit.type = "submit";
+    quiz.appendChild(submit)
+    return submit;
+}
+
+function SendAnswers(channel) {
+
 }

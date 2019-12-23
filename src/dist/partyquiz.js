@@ -74,7 +74,7 @@ var Client = /** @class */ (function (_super) {
                 _this.toggleStatusWindow();
                 QuizPlayer(_this.dataChannel);
             };
-            _this.dataChannel.onmessage = function (e) { Log('Got message:', e.data); };
+            //this.dataChannel.onmessage = (e) => { Log('Got message:', e.data); }
         };
         peerConn.onicecandidate = function (e) {
             if (e.candidate == null) {
@@ -134,9 +134,16 @@ function StartClient(evt) {
 }
 document.getElementById("host").onclick = StartHost;
 document.getElementById("client").onclick = StartClient;
+var QuestionType;
+(function (QuestionType) {
+    QuestionType[QuestionType["MultipleChoice"] = 0] = "MultipleChoice";
+    QuestionType[QuestionType["SingleChoice"] = 1] = "SingleChoice";
+    QuestionType[QuestionType["WriteIn"] = 2] = "WriteIn";
+})(QuestionType || (QuestionType = {}));
 var question1 = {
-    questionId: "1",
+    questionId: "q1",
     question: "John is ...",
+    questionType: QuestionType.SingleChoice,
     answers: [{
             text: "Awesome",
             value: 10
@@ -151,6 +158,9 @@ function QuizServer(channel) {
         if (data && data.ready) {
             channel.send(JSON.stringify(question1));
         }
+        if (data && data.questionId) {
+            Log(data);
+        }
     };
 }
 function QuizPlayer(channel) {
@@ -158,7 +168,10 @@ function QuizPlayer(channel) {
         var question = JSON.parse(e.data);
         console.log("Question:", question);
         if (question.questionId) {
-            RenderQuestion(question);
+            var submit = RenderQuestion(question);
+            submit.onclick = function (e) {
+                channel.send(JSON.stringify({ questionId: "q1", answer: "true" }));
+            };
         }
     };
     channel.send(JSON.stringify({ ready: true }));
@@ -172,13 +185,29 @@ function RenderQuestion(question) {
         var i = _a[_i];
         var qlabel = document.createElement("label");
         var input = document.createElement("input");
-        input.type = "radio";
+        switch (question.questionType) {
+            case QuestionType.SingleChoice:
+                input.type = "radio";
+                break;
+            case QuestionType.MultipleChoice:
+                input.type = "checkbox";
+                break;
+            case QuestionType.WriteIn:
+                input.type = "text";
+                break;
+        }
         input.innerText = i.text;
         input.value = i.value.toString();
-        input.name = "q" + question.questionId;
+        input.name = question.questionId;
         qlabel.innerText = i.text;
         qlabel.appendChild(input);
         quiz.appendChild(qlabel);
     }
+    var submit = document.createElement("input");
+    submit.type = "submit";
+    quiz.appendChild(submit);
+    return submit;
+}
+function SendAnswers(channel) {
 }
 //# sourceMappingURL=partyquiz.js.map

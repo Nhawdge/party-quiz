@@ -12,7 +12,7 @@ class Client extends BaseRtc {
                 this.toggleStatusWindow();
                 QuizPlayer(this.dataChannel);
             };
-            this.dataChannel.onmessage = (e) => { Log('Got message:', e.data); }
+            //this.dataChannel.onmessage = (e) => { Log('Got message:', e.data); }
         };
 
         peerConn.onicecandidate = (e) => {
