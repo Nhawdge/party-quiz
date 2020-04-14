@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Party Quiz</title>
+    <link rel="stylesheet" href="partyquiz.css">
+</head>
+
+<body>
+    <div class="box" data-bind="visible: State() == 1, using: JoinVM">
+        Room Name: <input data-bind="value: RoomName">
+        Pass: <input data-bind="value: Passcode">
+        <input type="button" value="Create" data-bind="click: Create" />
+        <input type="button" value="Join" data-bind="click: Join" />
+        <br>
+        <ul data-bind="foreach:AvailableRooms">
+            <li data-bind="text: $data"></li>
+        </ul>
+    </div>
+    <div class="game" data-bind="visible: State() == 2, using: GameVM">
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-latest.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.js'></script>
+    <script src="partyquiz.js"></script>
+</body>
+
+</html>

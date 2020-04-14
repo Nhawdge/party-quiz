@@ -1,0 +1,25 @@
+{
+  "name": "party-quiz",
+  "version": "0.0.1",
+  "description": "",
+  "main": "src/server.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0",
+    "socketio-wildcard": "^2.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Nhawdge/party-quiz.git"
+  },
+  "author": "John Pavek",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Nhawdge/party-quiz/issues"
+  },
+  "homepage": "https://github.com/Nhawdge/party-quiz#readme"
+}
