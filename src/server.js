@@ -22,39 +22,116 @@ function listen() {
 //     }
 // });
 
-
+var quizzes = require("./server/quiz.json");
 app.use(express.static('src/web'))
-
-
 let io = require('socket.io')(server)
 
 // Catch wildcard socket events
 var middleware = require('socketio-wildcard')()
 io.use(middleware)
 
-var connections = {};
-
+var CONNECTIONS = {};
+var QUIZROOMS = {};
 
 io.sockets.on('connection', function (socket) {
-    connections[socket.id] = socket;
+    CONNECTIONS[socket.id] = socket;
 
     socket.on('newQuiz', (data) => {
-        newQuiz(socket, data)
+        newQuiz(socket, data);
     })
+
     socket.on('joinQuiz', (data) => {
         joinQuiz(socket, data)
+    })
+    socket.on("NextQuestion", (data) => {
+        var quiz = QUIZROOMS[data.roomName];
+        if (data.state) {
+            quiz.state = data.state;
+        }
+        quiz.nextQuestion();
     })
 })
 
 function newQuiz(socket, data) {
-    console.log(connections)
-    for (let player in connections) {
-        connections[player].emit("NewRoom", {
-            roomName: data.roomName
-        });
+    var quiz = new Quiz();
+    quiz.roomName = data.roomName;
+    quiz.host = data.playerName;
+
+    quiz.addPlayer(data, socket.id);
+    quiz.updatePlayers();
+    QUIZROOMS[data.roomName] = quiz;
+}
+
+
+function joinQuiz(socket, data) {
+    var quiz = QUIZROOMS[data.roomName]
+    if (!quiz) {
+        socket.emit("JoinFail", {
+            status: "error",
+            message: "room name does not exist"
+        })
+
+    } else { 
+        quiz.addPlayer(data, socket.id);
+        quiz.updatePlayers();
     }
 }
 
-function joinQuiz(socket, data) {
-    console.log(data);
+function Quiz() {
+    var self = this;
+    self.roomName = "";
+    self.host = "";
+    self.selectedQuiz = quizzes.quizzes[0];
+    self.players = []
+    self.questionIndex = 0;
+    self.state = 0;
+
+    self.updatePlayers = function () {
+        for (let player of self.players) {
+            CONNECTIONS[player.id].emit("JoinSuccess", {
+                roomName: self.roomName,
+                hostName: self.host,
+                state: self.state
+            });
+            CONNECTIONS[player.id].emit("playerJoined", {
+                players: self.players.map(x => x.name)
+            });
+        }
+    }
+    self.nextQuestion = function () {
+        if (self.questionIndex < self.selectedQuiz.questions.length) {
+            for (let player of self.players) {
+                CONNECTIONS[player.id].emit("UpdateQuestion", {
+                    question: self.selectedQuiz.questions[self.questionIndex].question,
+                    answers: self.selectedQuiz.questions[self.questionIndex].answers.map(x => x.answer),
+                    questionType: self.questionType(),
+                    state: self.state,
+                    questionId: player.id + "-" + self.questionIndex
+                })
+            }
+            self.questionIndex++;
+        } else {
+            for (let player of self.players) {
+                CONNECTIONS[player.id].emit("GameDone", {})
+            }
+        }
+    }
+    self.addPlayer = function (data, socketid) {
+        self.players.push({
+            id: socketid,
+            name: data.playerName
+        });
+    }
+
+    self.questionType = function () {
+        var answers = self.selectedQuiz.questions[self.questionIndex].answers;
+        switch (answers.filter(x => x.points).length) {
+            case 0:
+                return "text";
+            case 1:
+                return "radio";
+            default:
+                return "checkbox";
+        }
+    }
 }
