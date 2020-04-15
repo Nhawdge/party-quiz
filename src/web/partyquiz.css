@@ -1,0 +1,45 @@
+* {
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    padding: 3px;
+}
+
+
+.box {
+    border: 1px solid black;
+    padding: 10px;
+    margin: auto;
+    width: 50%;
+}
+
+div#login>* {
+    display: flex;
+}
+
+input[type="button"] {flex: 2 100px;}
+
+#login input {
+    flex: 1 100%;
+    /* width: 100%; */
+}
+
+.game ul {
+    list-style: none;
+}
+
+.game label {
+    background-color: aquamarine;
+    margin: 15px;
+    border: 1px solid black;
+    padding: 10px;
+    font-size: 18px;
+}
+
+.game {
+    display: grid;
+    width: 500px;
+    margin: auto;
+}
+
+.game div {
+    display: grid;
+}

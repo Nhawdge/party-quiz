@@ -1,0 +1,55 @@
+{
+    "quizzes": [
+        {
+            "title": "Test",
+            "author": "John",
+            "date": "4-14-2020",
+            "questions": [
+                {
+                    "number": 1,
+                    "question": "What is the letter A.",
+                    "answers": [
+                        {
+                            "answer": "a",
+                            "points": 1
+                        },
+                        {
+                            "answer": "b",
+                            "points": 0
+                        },
+                        {
+                            "answer": "c",
+                            "points": 0
+                        },
+                        {
+                            "answer": "d",
+                            "points": 0
+                        }
+                    ]
+                },
+                {
+                    "number": 2,
+                    "question": "What is the letter B.",
+                    "answers": [
+                        {
+                            "answer": "a",
+                            "points": 1
+                        },
+                        {
+                            "answer": "b",
+                            "points": 1
+                        },
+                        {
+                            "answer": "c",
+                            "points": 0
+                        },
+                        {
+                            "answer": "d",
+                            "points": 0
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

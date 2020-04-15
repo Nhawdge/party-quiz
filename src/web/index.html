@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Party Quiz</title>
+    <link rel="stylesheet" href="partyquiz.css">
+</head>
+
+<body>
+    <div class="box" id="login" data-bind="visible: state() == 1, using: JoinVM">
+        Your Name: <input data-bind="value: playerName">
+        Room Name: <input data-bind="value: roomName">
+        Pass: <input data-bind="value: passcode">
+        <input type="button" value="Create" data-bind="click: create" />
+        <input type="button" value="Join" data-bind="click: join" />
+        <br>
+        <ul data-bind="foreach: availableRooms">
+            <li data-bind="text: $data"></li>
+        </ul>
+    </div>
+    <div class="lobby" data-bind="visible: state() == 0, using: GameVM">
+        <h2>Game Name: <span data-bind="text: roomName"></span></h2>
+        <h3>Host Name: <span data-bind="text: hostName"></span></h2>
+            <button data-bind="click: startGame, enable:$parent.isHost">Start Game</button>
+            <ul data-bind="foreach: players">
+                <li data-bind="text: $data"> </li>
+            </ul>
+    </div>
+    <div class="game" data-bind="visible: state() == 2, using: GameVM">
+        <h2 data-bind="text: question"></h2>
+        <div data-bind="if: questionType() == 'radio'">
+            <div data-bind="foreach: answers">
+                <label>
+                    <input type="radio" data-bind="value: $data, attr: {name:$parent.question}" />
+                    <span data-bind=" text: $data"> </span>
+                </label>
+            </div>
+        </div>
+        <div data-bind="if: questionType() == 'checkbox'">
+            <div data-bind="foreach: answers">
+                <label>
+                    <input type="checkbox" data-bind="value: $data, attr: {name:$parent.question}" />
+                    <span data-bind="text: $data"> </span>
+                </label>
+            </div>
+        </div>
+        <div data-bind="if: questionType() == 'text',">
+            <div data-bind="foreach: answers">
+                <input type="text" data-bind="value: $data" />
+            </div>
+        </div>
+        <div data-bind="visible: $parent.isHost">
+            <button data-bind="click: nextQuestion, visible:$parent.isHost">Next Question</button>
+        </div>
+        <div data-bind="visible: !$parent.isHost()">
+            <button data-bind="click: saveAnswer">Send Answer</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-latest.js"></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.js'></script>
+    <script src="partyquiz.js"></script>
+</body>
+
+</html>
