@@ -3,7 +3,7 @@ This is a little node/websockets project to let you create your own quizzes for 
 
 # How to use
 
-1. Add proper questions to the quiz fil.e
+1. Add proper questions to the quiz file.
 2. run `node src/server` 
 3. create a server, join and play
 
