@@ -15,7 +15,9 @@ div#login>* {
     display: flex;
 }
 
-input[type="button"] {flex: 2 100px;}
+input[type="button"] {
+    flex: 2 100px;
+}
 
 #login input {
     flex: 1 100%;
@@ -36,8 +38,14 @@ input[type="button"] {flex: 2 100px;}
 
 .game {
     display: grid;
-    width: 500px;
+    max-width: 750px;
     margin: auto;
+    height: 90vh;
+    grid-template-rows: auto auto 1fr auto;
+}
+
+.answerContainer {
+    overflow: auto;
 }
 
 .game div {

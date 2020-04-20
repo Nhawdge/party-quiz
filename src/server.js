@@ -10,7 +10,7 @@ let server = app.listen(process.env.PORT || 2000, listen);
 function listen() {
     let host = server.address().address;
     let port = server.address().port;
-    console.log('Codenames Server Started at http://' + host + ':' + port);
+    console.log('Quiz Server started at http://' + host + ':' + port);
 }
 
 // Force SSL
@@ -30,8 +30,8 @@ let io = require('socket.io')(server)
 var middleware = require('socketio-wildcard')()
 io.use(middleware)
 
-var CONNECTIONS = {};
-var QUIZROOMS = {};
+const CONNECTIONS = {};
+const QUIZROOMS = {};
 
 io.sockets.on('connection', function (socket) {
     CONNECTIONS[socket.id] = socket;
@@ -71,67 +71,69 @@ function joinQuiz(socket, data) {
             message: "room name does not exist"
         })
 
-    } else { 
+    } else {
         quiz.addPlayer(data, socket.id);
         quiz.updatePlayers();
     }
 }
 
-function Quiz() {
-    var self = this;
-    self.roomName = "";
-    self.host = "";
-    self.selectedQuiz = quizzes.quizzes[0];
-    self.players = []
-    self.questionIndex = 0;
-    self.state = 0;
+class Quiz {
+    roomName = "";
+    host = "";
+    selectedQuiz = quizzes.quizzes[1];
+    players = []
+    questionIndex = 0;
+    state = 0;
 
-    self.updatePlayers = function () {
-        for (let player of self.players) {
+    updatePlayers = function () {
+        for (let player of this.players) {
             CONNECTIONS[player.id].emit("JoinSuccess", {
-                roomName: self.roomName,
-                hostName: self.host,
-                state: self.state
+                roomName: this.roomName,
+                hostName: this.host,
+                state: this.state
             });
             CONNECTIONS[player.id].emit("playerJoined", {
-                players: self.players.map(x => x.name)
+                players: this.players.map(x => x.name)
             });
         }
     }
-    self.nextQuestion = function () {
-        if (self.questionIndex < self.selectedQuiz.questions.length) {
-            for (let player of self.players) {
+    nextQuestion = function () {
+        if (this.questionIndex < this.selectedQuiz.questions.length) {
+            for (let player of this.players) {
                 CONNECTIONS[player.id].emit("UpdateQuestion", {
-                    question: self.selectedQuiz.questions[self.questionIndex].question,
-                    answers: self.selectedQuiz.questions[self.questionIndex].answers.map(x => x.answer),
-                    questionType: self.questionType(),
-                    state: self.state,
-                    questionId: player.id + "-" + self.questionIndex
+                    question: this.selectedQuiz.questions[this.questionIndex].question,
+                    answers: this.selectedQuiz.questions[this.questionIndex].answers.map(x => x.answer),
+                    questionType: this.questionType(),
+                    state: this.state,
+                    questionId: player.id + "-" + this.questionIndex
                 })
             }
-            self.questionIndex++;
+            this.questionIndex++;
         } else {
-            for (let player of self.players) {
+            for (let player of this.players) {
                 CONNECTIONS[player.id].emit("GameDone", {})
             }
         }
     }
-    self.addPlayer = function (data, socketid) {
-        self.players.push({
+    addPlayer = (data, socketid) => {
+        this.players.push({
             id: socketid,
             name: data.playerName
         });
     }
 
-    self.questionType = function () {
-        var answers = self.selectedQuiz.questions[self.questionIndex].answers;
+    questionType = () => {
+        var answers = this.selectedQuiz.questions[this.questionIndex].answers;
+        if (answers.length == 1) {
+            return { type: "range", min: answers[0].minRange, max: answers[0].maxRange };
+        }
         switch (answers.filter(x => x.points).length) {
             case 0:
-                return "text";
+                return{ type:  "text"};
             case 1:
-                return "radio";
+                return { type: "radio"};
             default:
-                return "checkbox";
+                return { type: "checkbox"};
         }
     }
 }

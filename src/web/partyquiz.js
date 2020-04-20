@@ -49,9 +49,13 @@ function GameViewModel(parent) {
     self.players = ko.observableArray();
 
     self.question = ko.observable();
-    self.questionType = ko.observable();
+    self.questionType = ko.observable({ type: "checkbox" });
     self.questionId = ko.observable();
     self.answers = ko.observableArray();
+
+    self.templateName = ko.computed(function () {
+        return self.questionType().type;
+    });
 
     socket.on("playerJoined", function (data) {
         self.players(data.players)
@@ -72,11 +76,12 @@ function GameViewModel(parent) {
     self.saveAnswer = function () {
 
     }
-    
+
     socket.on("UpdateQuestion", function (data) {
         self.question(data.question);
         self.questionType(data.questionType)
-        self.answers(data.answers);
+        self.answers(data.answers.length == 1 ? ["0"] : data.answers);
+        console.log(data.answers);
         self.parent.state(data.state);
     })
 }

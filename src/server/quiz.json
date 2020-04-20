@@ -50,6 +50,382 @@
                     ]
                 }
             ]
+        },
+        {
+            "title": "Chrismas Quis",
+            "author": "John",
+            "date": "4-18-2020",
+            "questions": [
+                {
+                    "number": 1,
+                    "question": " What do people kiss under during the holiday season?",
+                    "answers": [
+                        {
+                            "answer": "Mistletoe",
+                            "points": 1
+                        },
+                        {
+                            "answer": "Holly",
+                            "points": 0
+                        },
+                        {
+                            "answer": "Roses",
+                            "points": 0
+                        },
+                        {
+                            "answer": "Cauliflower",
+                            "points": 0
+                        }
+                    ]
+                },
+                {
+                    "number": 2,
+                    "question": "Per a recent holiday fad, what “spy” hides around the house, reporting back to Santa on who has been naughty and nice?",
+                    "answers": [
+                        {
+                            "answer": "Elf on the Shelf",
+                            "points": 1
+                        },
+                        {
+                            "answer": "Heath on a Wreath",
+                            "points": 0
+                        },
+                        {
+                            "answer": "John on the Lawn",
+                            "points": 0
+                        },
+                        {
+                            "answer": "Snowman on the human",
+                            "points": 0
+                        }
+                    ]
+                },
+                {
+                    "number": 3,
+                    "question": "In Charles Dickens’ “A Christmas Carol,” what was Mr. Scrooge’s first name?",
+                    "answers": [
+                        {
+                            "answer": "Ebenezer",
+                            "points": 1
+                        },
+                        {
+                            "answer": "Scrooge",
+                            "points": 0
+                        },
+                        {
+                            "answer": "Ronald",
+                            "points": 0
+                        },
+                        {
+                            "answer": "Steven",
+                            "points": 0
+                        }
+                    ]
+                },
+                {
+                    "number": 4,
+                    "question": "Visions of which sweet foodstuff danced in children’s heads as they slept, according to Clement Clarke Moore’s poem “‘Twas the Night before Christmas”?",
+                    "answers": [
+                        {
+                            "answer": "Sugar-plums",
+                            "points": 1
+                        },
+                        {
+                            "answer": "Sweet tarts",
+                            "points": 0
+                        },
+                        {
+                            "answer": "Cotton Candy",
+                            "points": 0
+                        },
+                        {
+                            "answer": "Frosted flatbread",
+                            "points": 0
+                        }
+                    ]
+                },
+                {
+                    "number": 5,
+                    "question": "What animated 2004 film is about a train that carries kids to the North Pole on Christmas Eve?",
+                    "answers": [
+                        {
+                            "answer": "The Polar Express",
+                            "points": 2
+                        },
+                        {
+                            "answer": "The Northbound Train",
+                            "points": 0
+                        },
+                        {
+                            "answer": "Santa's Railway",
+                            "points": 0
+                        },
+                        {
+                            "answer": "Tracks at the North Pole",
+                            "points": 0
+                        }
+                    ]
+                },
+                {
+                    "number": 6,
+                    "question": "What beverage company has been using Santa Claus in its advertising since 1931?",
+                    "answers": [
+                        {
+                            "answer": "Coca-Cola",
+                            "points": 2
+                        },
+                        {
+                            "answer": "Is Pepsi okay?",
+                            "points": 0
+                        },
+                        {
+                            "answer": "Shasta",
+                            "points": 0
+                        },
+                        {
+                            "answer": "Budweiser",
+                            "points": 0
+                        }
+                    ]
+                },
+                {
+                    "number": 7,
+                    "question": "What holiday movie sequel includes a cameo by Donald Trump?",
+                    "answers": [
+                        {
+                            "answer": "Home Alone 2",
+                            "points": 2
+                        },
+                        {
+                            "answer": "Die Hard 2",
+                            "points": 0
+                        },
+                        {
+                            "answer": "Miracle on 35th Street”",
+                            "points": 0
+                        },
+                        {
+                            "answer": "Winter's Awake 2",
+                            "points": 0
+                        }
+                    ]
+                },
+                {
+                    "number": 8,
+                    "question": "What are two other names for Santa Claus?",
+                    "answers": [
+                        {
+                            "answer": "Saint Nick",
+                            "points": 1
+                        },
+                        {
+                            "answer": "Kris Kringle",
+                            "points": 1
+                        },
+                        {
+                            "answer": "Chimmney Chris",
+                            "points": 0
+                        },
+                        {
+                            "answer": "St Albert",
+                            "points": 0
+                        },
+                        {
+                            "answer": "Krampus",
+                            "points": 0
+                        }
+                    ]
+                },
+                {
+                    "number": 9,
+                    "question": "How many years has the Falls Park Winter Wonderland light show taken place?",
+                    "answers": [
+                        {
+                            "answer": "16",
+                            "points": 3,
+                            "minRange": 0,
+                            "maxRange": 40,
+                            "startingValue":0
+                        }
+                    ]
+                },
+                {
+                    "number": 10,
+                    "question": "How many trees are decorated in the Winter Wonderland light show? (In 2018)?",
+                    "answers": [
+                        {
+                            "answer": "270",
+                            "points": 3
+                        }
+                    ]
+                },
+                {
+                    "number": 11,
+                    "question": "Which movie takes place inside a snowflake?",
+                    "answers": [
+                        {
+                            "answer": "How the Grinch Stole Christmas",
+                            "points": 3
+                        },
+                        {
+                            "answer": "Frozen",
+                            "points": 0
+                        },
+                        {
+                            "answer": "Home Alone",
+                            "points": 0
+                        },
+                        {
+                            "answer": "Nightmare Before Christmas",
+                            "points": 0
+                        }
+                    ]
+                },
+                {
+                    "number": 12,
+                    "question": "“Miracle on 34th Street” centers on what real-life department store?",
+                    "answers": [
+                        {
+                            "answer": "Macy’s",
+                            "points": 3
+                        },
+                        {
+                            "answer": "J.C. Penny's",
+                            "points": 0
+                        },
+                        {
+                            "answer": "Dick's Sporting Goods",
+                            "points": 0
+                        },
+                        {
+                            "answer": "Riddle's Jewlery",
+                            "points": 0
+                        }
+                    ]
+                },
+                {
+                    "number": 13,
+                    "question": " In the TV special “How the Grinch Stole Christmas,” what three words best describe the Grinch?",
+                    "answers": [
+                        {
+                            "answer": "Stink",
+                            "points": 1
+                        },
+                        {
+                            "answer": "Stank",
+                            "points": 1
+                        },
+                        {
+                            "answer": "stunk",
+                            "points": 1
+                        },
+                        {
+                            "answer": "monster",
+                            "points": 0
+                        },
+                        {
+                            "answer": "vile",
+                            "points": 0
+                        },
+                        {
+                            "answer": "nasty",
+                            "points": 0
+                        },
+                        {
+                            "answer": "unwashed",
+                            "points": 0
+                        },
+                        {
+                            "answer": "moldy ",
+                            "points": 0
+                        },
+                        {
+                            "answer": "Rubbish ",
+                            "points": 0
+                        }
+                    ]
+                },
+                {
+                    "number": 14,
+                    "question": "In Home Alone 2, how much does Kevin pay for his stay in hotel rooms? (Round to the nearest hundred)",
+                    "answers": [
+                        {
+                            "answer": "$967",
+                            "points": 3,
+                            "minRange": 10,
+                            "maxRange": 5000,
+                            "startingValue":0
+
+                        }
+                    ]
+                },
+                {
+                    "number": 15,
+                    "question": "What year did Mariah Carey’s “All I Want for Christmas is You” come out?",
+                    "answers": [
+                        {
+                            "answer": "1994",
+                            "points": 3,
+                            "minRange": 1960,
+                            "maxRange": 2015,
+                            "startingValue":0
+
+                        }
+                    ]
+                },
+                {
+                    "number": 17,
+                    "question": "Name all of Santa’s Reindeer",
+                    "answers": [
+                        {
+                            "answer": "Rudolph",
+                            "points": 0.3
+                        },
+                        {
+                            "answer": "Dasher",
+                            "points": 0.3
+                        },
+                        {
+                            "answer": "Dancer",
+                            "points": 0.3
+                        },
+                        {
+                            "answer": "Prancer",
+                            "points": 0.3
+                        },
+                        {
+                            "answer": "Vixen",
+                            "points": 0.3
+                        },
+                        {
+                            "answer": "Comet",
+                            "points": 0.3
+                        },
+                        {
+                            "answer": "Cupid",
+                            "points": 0.3
+                        },
+                        {
+                            "answer": "Donder",
+                            "points": 0.3
+                        },
+                        {
+                            "answer": "Blitzen",
+                            "points": 0.3
+                        }
+                    ]
+                },
+                {
+                    "number": 18,
+                    "question": "In A Christmas Story, how many times does Ralphie say he wants a Red Ryder BB Gun?",
+                    "answers": [
+                        {
+                            "answer": "28",
+                            "points": 4
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }
