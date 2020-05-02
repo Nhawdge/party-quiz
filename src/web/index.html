@@ -9,66 +9,86 @@
 </head>
 
 <body>
-    <div class="box" id="login" data-bind="visible: state() == 1, using: JoinVM">
-        Your Name: <input data-bind="value: playerName">
-        Room Name: <input data-bind="value: roomName">
-        Pass: <input data-bind="value: passcode">
-        <input type="button" value="Create" data-bind="click: create" />
-        <input type="button" value="Join" data-bind="click: join" />
-        <br>
-        <ul data-bind="foreach: availableRooms">
-            <li data-bind="text: $data"></li>
-        </ul>
-    </div>
-    <div class="lobby" data-bind="visible: state() == 0, using: GameVM">
-        <h2>Game Name: <span data-bind="text: roomName"></span></h2>
-        <h3>Host Name: <span data-bind="text: hostName"></span></h2>
-            <button data-bind="click: startGame, enable:$parent.isHost">Start Game</button>
-            <ul data-bind="foreach: players">
-                <li data-bind="text: $data"> </li>
-            </ul>
-    </div>
-    <div class="game" data-bind="visible: state() == 2, using: GameVM">
-        <h2 data-bind="text: question"></h2>
-        <div class="answerContainer" data-bind="template: {if: question, name: templateName}"> </div>
-        <template id='radio'>
-            <div class="answer" data-bind="foreach: answers">
-                <label>
-                    <input type="radio" data-bind="value: $data, attr: {name:$parent.question}" />
-                    <span data-bind=" text: $data"> </span>
-                </label>
+    <main id="content" data-bind="template: activeState">
+    </main>
+
+    <template id="login">
+        <div class="login">
+            <label>Your Name: <input data-bind="value: playerName"></label>
+            <label>Room Name: <input data-bind="value: roomName"></label>
+            <label>Pass: <input data-bind="value: passcode"></label>
+            <input type="button" value="Create" data-bind="click: create" />
+            <input type="button" value="Join" data-bind="click: join" />
+
+            <div data-bind="if: availableRooms().length">
+                <h2>Public Rooms</h2>
+                <ul data-bind="foreach: availableRooms">
+                    <li data-bind="text: $data"></li>
+                </ul>
             </div>
-        </template>
-        <template id='checkbox'>
-            <div class="answer" data-bind="foreach: answers">
-                <label>
-                    <input type="checkbox" data-bind="value: $data, attr: {name:$parent.question}" />
-                    <span data-bind="text: $data"> </span>
-                </label>
-            </div>
-        </template>
-        <template id='range'>
-            <div class="answer" data-bind="foreach: answers">
-                <label>
-                    <input type="range"
-                        data-bind="value: $data, attr: {name:$parent.question, min: $parent.questionType().min, max: $parent.questionType().max }" />
-                    <span data-bind="text: $data"> </span>
-                </label>
-            </div>
-        </template>
-        <template id='text'>
-            <div class="answer" data-bind="foreach: answers">
-                <input type="text" data-bind="value: $data" />
-            </div>
-        </template>
-        <div></div>
-        <div data-bind="visible: $parent.isHost">
-            <button data-bind="click: nextQuestion, visible:$parent.isHost">Next Question</button>
         </div>
-        <div data-bind="visible: !$parent.isHost()">
-            <button data-bind="click: saveAnswer">Send Answer</button>
+    </template>
+    <template id="lobby">
+        <div class="lobby">
+            <h2>Game Name: <span data-bind="text: roomName"></span></h2>
+            <h3>Host Name: <span data-bind="text: hostName"></span></h2>
+                <button data-bind="click: startGame, enable:$parent.isHost">Start Game</button>
+                <ul data-bind="foreach: players">
+                    <li data-bind="text: $data"> </li>
+                </ul>
         </div>
-    </div>
+    </template>
+    <template id="game">
+        <div class="game">
+            <h2 data-bind="text: question"></h2>
+            <div class="answerContainer" data-bind="template: {if: question, name: templateName}"> </div>
+            <template id='radio'>
+                <div class="answer" data-bind="foreach: answers">
+                    <label>
+                        <input type="radio" data-bind="checked: $parent.selectedAnswer, value:$data, attr: {name:$parent.question}" />
+                        <span data-bind=" text: $data"> </span>
+                    </label>
+                </div>
+            </template>
+            <template id='checkbox'>
+                <div class="answer" data-bind="foreach: answers">
+                    <label>
+                        <input type="checkbox" data-bind="checked: $parent.selectedAnswer,value:$data" />
+                        <span data-bind="text: $data"> </span>
+                    </label>
+                </div>
+            </template>
+            <template id='range'>
+                <div class="answer" data-bind="foreach: answers">
+                    <label>
+                        <input type="range" data-bind="value: $parent.selectedAnswer, attr: {name:$parent.question, min: $parent.questionType().min, max: $parent.questionType().max }" />
+                        <span data-bind="text: $data"> </span>
+                    </label>
+                </div>
+            </template>
+            <template id='text'>
+                <div class="answer" data-bind="foreach: answers">
+                    <input type="text" data-bind="value: $parent.selectedAnswer" />
+                </div>
+            </template>
+            <div>
+                <div data-bind="foreach: scoreBoard"> 
+                    <ul>                        
+                        <li>
+                            <span data-bind="text: name"></span> 
+                            <span data-bind="text: score"></span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div data-bind="visible: $parent.isHost">
+                <button data-bind="click: nextQuestion, visible:$parent.isHost">Next Question</button>
+            </div>
+            <div data-bind="visible: !$parent.isHost()">
+                <button data-bind="click: saveAnswer, disable: answerLocked">Send Answer</button>
+            </div>
+        </div>
+    </template>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-latest.js"></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.js'></script>

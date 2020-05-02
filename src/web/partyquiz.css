@@ -4,24 +4,16 @@
 }
 
 
-.box {
+.login {
     border: 1px solid black;
     padding: 10px;
     margin: auto;
     width: 50%;
 }
 
-div#login>* {
-    display: flex;
-}
-
-input[type="button"] {
-    flex: 2 100px;
-}
-
-#login input {
-    flex: 1 100%;
-    /* width: 100%; */
+.login label {
+    display: grid;
+    grid-template-columns: 30% 1fr;
 }
 
 .game ul {
@@ -48,6 +40,8 @@ input[type="button"] {
     overflow: auto;
 }
 
-.game div {
-    display: grid;
+@media screen and (max-width: 550px) {
+    .login {
+        width: 90%;
+    }
 }

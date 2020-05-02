@@ -22,6 +22,14 @@ function listen() {
 //     }
 // });
 
+const STATES = {
+    login: "login",
+    game: "game",
+    lobby: "lobby",
+    quizmaker: "quizmaker",
+}
+
+
 var quizzes = require("./server/quiz.json");
 app.use(express.static('src/web'))
 let io = require('socket.io')(server)
@@ -43,12 +51,22 @@ io.sockets.on('connection', function (socket) {
     socket.on('joinQuiz', (data) => {
         joinQuiz(socket, data)
     })
+
     socket.on("NextQuestion", (data) => {
         var quiz = QUIZROOMS[data.roomName];
         if (data.state) {
             quiz.state = data.state;
         }
         quiz.nextQuestion();
+    })
+
+    socket.on("SaveAnswer", (data) => {
+        console.log("sa socket", data)
+        var quiz = QUIZROOMS[data.roomName];
+        if (data.state) {
+            quiz.state = data.state;
+        }
+        quiz.saveAnswer(data, socket.id);
     })
 })
 
@@ -76,6 +94,15 @@ function joinQuiz(socket, data) {
         quiz.updatePlayers();
     }
 }
+class Player {
+    id = "";
+    name = "";
+    score = 0;
+    constructor(id, name) {
+        this.id = id;
+        this.name = name;
+    }
+}
 
 class Quiz {
     roomName = "";
@@ -83,7 +110,8 @@ class Quiz {
     selectedQuiz = quizzes.quizzes[1];
     players = []
     questionIndex = 0;
-    state = 0;
+    state = STATES.lobby;
+    answers = {};
 
     updatePlayers = function () {
         for (let player of this.players) {
@@ -97,6 +125,24 @@ class Quiz {
             });
         }
     }
+
+    saveAnswer = function (data) {
+        var splitId = data.questionId.split("|");
+        var playerId = splitId[0];
+        var questionIndex = splitId[1];
+        console.log(data.questionId, playerId, questionIndex);
+
+        var question = this.selectedQuiz.questions[questionIndex];
+        var answers = question.answers;
+        var userAnswer = answers.find(x => x.answer == data.selectedAnswer);
+        
+        if (userAnswer && !this.answers[playerId][data.questionId]) {
+            this.players.find(x => x.id == playerId).score += userAnswer.points;
+            this.answers[playerId][data.questionId] = data.selectedAnswer;
+        }
+        console.log("points: ", userAnswer, this.players);
+    }
+ 
     nextQuestion = function () {
         if (this.questionIndex < this.selectedQuiz.questions.length) {
             for (let player of this.players) {
@@ -105,10 +151,12 @@ class Quiz {
                     answers: this.selectedQuiz.questions[this.questionIndex].answers.map(x => x.answer),
                     questionType: this.questionType(),
                     state: this.state,
-                    questionId: player.id + "-" + this.questionIndex
+                    questionId: player.id + "|" + this.questionIndex,
+                    scores: this.players.map(x => { return { name: x.name, score: x.score } })
                 })
             }
             this.questionIndex++;
+            console.log(this.answers)
         } else {
             for (let player of this.players) {
                 CONNECTIONS[player.id].emit("GameDone", {})
@@ -116,10 +164,8 @@ class Quiz {
         }
     }
     addPlayer = (data, socketid) => {
-        this.players.push({
-            id: socketid,
-            name: data.playerName
-        });
+        this.players.push(new Player(socketid, data.playerName))
+        this.answers[socketid] = {};
     }
 
     questionType = () => {
@@ -129,11 +175,11 @@ class Quiz {
         }
         switch (answers.filter(x => x.points).length) {
             case 0:
-                return{ type:  "text"};
+                return { type: "text" };
             case 1:
-                return { type: "radio"};
+                return { type: "radio" };
             default:
-                return { type: "checkbox"};
+                return { type: "checkbox" };
         }
     }
 }
