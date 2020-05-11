@@ -38,10 +38,15 @@
 
 .answerContainer {
     overflow: auto;
+    display: grid;
 }
 
 @media screen and (max-width: 550px) {
     .login {
         width: 90%;
     }
+}
+
+.answer{
+    display: grid;
 }
