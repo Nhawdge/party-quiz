@@ -10,7 +10,7 @@ let server = app.listen(process.env.PORT || 2000, listen);
 function listen() {
     let host = server.address().address;
     let port = server.address().port;
-    console.log('Quiz Server started at http://' + host + ':' + port);
+    console.log('Quiz Server started');
 }
 
 // Force SSL
@@ -95,25 +95,26 @@ function joinQuiz(socket, data) {
     }
 }
 class Player {
-    id = "";
-    name = "";
-    score = 0;
+
     constructor(id, name) {
         this.id = id;
         this.name = name;
+        this.score = 0;
     }
 }
 
 class Quiz {
-    roomName = "";
-    host = "";
-    selectedQuiz = quizzes.quizzes[1];
-    players = []
-    questionIndex = 0;
-    state = STATES.lobby;
-    answers = {};
+    constructor() {
+        this.roomName = "";
+        this.host = "";
+        this.selectedQuiz = quizzes.quizzes[1];
+        this.players = []
+        this.questionIndex = 0;
+        this.state = STATES.lobby;
+        this.answers = {};
+    }
 
-    updatePlayers = function () {
+    updatePlayers() {
         for (let player of this.players) {
             CONNECTIONS[player.id].emit("JoinSuccess", {
                 roomName: this.roomName,
@@ -126,7 +127,7 @@ class Quiz {
         }
     }
 
-    saveAnswer = function (data) {
+    saveAnswer(data) {
         var splitId = data.questionId.split("|");
         var playerId = splitId[0];
         var questionIndex = splitId[1];
@@ -135,15 +136,15 @@ class Quiz {
         var question = this.selectedQuiz.questions[questionIndex];
         var answers = question.answers;
         var userAnswer = answers.find(x => x.answer == data.selectedAnswer);
-        
+
         if (userAnswer && !this.answers[playerId][data.questionId]) {
             this.players.find(x => x.id == playerId).score += userAnswer.points;
             this.answers[playerId][data.questionId] = data.selectedAnswer;
         }
         console.log("points: ", userAnswer, this.players);
     }
- 
-    nextQuestion = function () {
+
+    nextQuestion() {
         if (this.questionIndex < this.selectedQuiz.questions.length) {
             for (let player of this.players) {
                 CONNECTIONS[player.id].emit("UpdateQuestion", {
@@ -152,7 +153,12 @@ class Quiz {
                     questionType: this.questionType(),
                     state: this.state,
                     questionId: player.id + "|" + this.questionIndex,
-                    scores: this.players.map(x => { return { name: x.name, score: x.score } })
+                    scores: this.players.map(x => {
+                        return {
+                            name: x.name,
+                            score: x.score
+                        }
+                    })
                 })
             }
             this.questionIndex++;
@@ -163,23 +169,33 @@ class Quiz {
             }
         }
     }
-    addPlayer = (data, socketid) => {
+    addPlayer(data, socketid) {
         this.players.push(new Player(socketid, data.playerName))
         this.answers[socketid] = {};
     }
 
-    questionType = () => {
+    questionType() {
         var answers = this.selectedQuiz.questions[this.questionIndex].answers;
         if (answers.length == 1) {
-            return { type: "range", min: answers[0].minRange, max: answers[0].maxRange };
+            return {
+                type: "range",
+                min: answers[0].minRange,
+                max: answers[0].maxRange
+            };
         }
         switch (answers.filter(x => x.points).length) {
             case 0:
-                return { type: "text" };
+                return {
+                    type: "text"
+                };
             case 1:
-                return { type: "radio" };
+                return {
+                    type: "radio"
+                };
             default:
-                return { type: "checkbox" };
+                return {
+                    type: "checkbox"
+                };
         }
     }
 }
